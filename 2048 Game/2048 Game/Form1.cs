@@ -17,7 +17,6 @@ namespace _2048_Game
         public Form1()
         {
             InitializeComponent();
-
             game_board = new Label[4, 4];
 
             for (int i = 0; i < 4; i++)
@@ -25,45 +24,21 @@ namespace _2048_Game
                 for (int j = 0; j < 4; j++)
                 {
                     game_board[i, j] = new Label();
-                    
+
                     game_board[i, j].Anchor = AnchorStyles.Top | AnchorStyles.Bottom | AnchorStyles.Left | AnchorStyles.Right;
                     game_board[i, j].Font = new Font("Tahoma", 32);
                     game_board[i, j].BackColor = Color.LightGray;
                     var margin = game_board[i, j].Margin;
                     margin.All = 4;
-                    game_board[i, j].Margin= margin; 
+                    game_board[i, j].Margin = margin;
                     game_board[i, j].TextAlign = ContentAlignment.MiddleCenter;
 
 
                     tableLayoutPanel1.Controls.Add(game_board[i, j], i, j);
                 }
             }
-            Random r = new Random();
-            int r1_x, r1_y, r2_x, r2_y, r1, r2;
-
-            int[] init_numbers = { 2, 2, 2, 2, 4 };
-
-            int random_index = r.Next(0, init_numbers.Length);
-            r1 = init_numbers[random_index];
-            if (init_numbers[random_index] != 4)
-            {
-                r2 = init_numbers[random_index];
-
-                r1_x = r.Next(0, 3);
-                r1_y = r.Next(0, 3);
-
-
-                do
-                {
-                    r2_x = r.Next(0, 3);
-                    r2_y = r.Next(0, 3);
-                }
-
-                while (r1_x == r2_x && r1_y == r2_y);
-
-                game_board[r1_x, r1_y].Text = Convert.ToString(r1);
-                game_board[r2_x, r2_y].Text = Convert.ToString(r2);
-            }
+            make_random();
+            make_random();
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -78,78 +53,103 @@ namespace _2048_Game
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-
-            if (e.KeyData == Keys.Up)
+            bool move = false;
+            for (int k = 0; k < 3; k++)
             {
-                for (int k = 0; k < 3; k++)
+                for (int i = 0; i < 4; i++)
                 {
-                    for (int i = 0; i < n; i++)
+                    for (int j = 0; j < 4; j++)
                     {
-                        for (int j = 0; j < n; j++)
+                        if(game_board[i,j].Text != "")
                         {
-                            if (j > 0 && game_board[i, j - 1].Text == "")
+
+                            if (e.KeyData == Keys.Up)
                             {
-                                game_board[i, j - 1].Text = game_board[i, j].Text;
-                                game_board[i, j].Text = "";
+
+                                if (j > 0 && game_board[i, j - 1].Text == "")
+                                {
+                                    move = true;
+                                    game_board[i, j - 1].Text = game_board[i, j].Text;
+                                    game_board[i, j].Text = "";
+                                }
+                                else if (j > 0 && game_board[i, j - 1].Text == game_board[i, j].Text)
+                                {
+                                    game_board[i, j - 1].Text = Convert.ToString(Convert.ToInt32(game_board[i, j].Text) * 2);
+                                    game_board[i, j].Text = "";
+                                }
+                            }
+
+                            else if (e.KeyData == Keys.Down)
+                            {
+
+                                if (j < 3 && game_board[i, j + 1].Text == "")
+                                {
+                                    move = true;
+                                    game_board[i, j + 1].Text = game_board[i, j].Text;
+                                    game_board[i, j].Text = "";
+                                }
+                                else if (j < 3 && game_board[i, j + 1].Text == game_board[i, j].Text)
+                                { 
+                                    game_board[i, j + 1].Text = Convert.ToString(Convert.ToInt32(game_board[i, j].Text) * 2);
+                                    game_board[i, j].Text = "";
+                                }
+                            }
+                            else if (e.KeyData == Keys.Left)
+                            {
+                                    if (i > 0 && game_board[i - 1, j].Text == "")
+                                    {
+                                        move = true;
+                                        game_board[i - 1, j].Text = game_board[i, j].Text;
+                                        game_board[i, j].Text = "";
+                                    }
+                                    else if (i > 0 && game_board[i - 1, j].Text == game_board[i, j].Text)
+                                    {      
+                                        game_board[i - 1, j].Text = Convert.ToString(Convert.ToInt32(game_board[i, j].Text) * 2);
+                                        game_board[i, j].Text = "";
+                                    }
+                            }
+                            else if (e.KeyData == Keys.Right)
+                            {
+
+                                if (i < 3 && game_board[i + 1, j].Text == "")
+                                {
+                                    move = true;
+                                    game_board[i + 1, j].Text = game_board[i, j].Text;
+                                    game_board[i, j].Text = "";
+                                }
+                                else if (i < 3 && game_board[i + 1, j].Text == game_board[i, j].Text)
+                                {
+                                    game_board[i + 1, j].Text = Convert.ToString(Convert.ToInt32(game_board[i, j].Text) * 2);
+                                    game_board[i, j].Text = "";
+                                }
                             }
                         }
                     }
                 }
             }
-
-            else if (e.KeyData == Keys.Down)
+            if (move == true)
             {
-                for (int k = 0; k < 3; k++)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                        {
-                            if (j < 3 && game_board[i, j + 1].Text == "")
-                            {
-                                game_board[i, j + 1].Text = game_board[i, j].Text;
-                                game_board[i, j].Text = "";
-
-                            }
-                        }
-                    }
-                }
-            }
-            else if (e.KeyData == Keys.Left)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                        {
-                            if (i > 0 && game_board[i - 1, j].Text == "")
-                            {
-                                game_board[i - 1, j].Text = game_board[i, j].Text;
-                                game_board[i, j].Text = "";
-
-                            }
-                        }
-                    }
-                }
-            }
-            else if (e.KeyData == Keys.Right)
-            {
-                for (int k = 0; k < 3; k++)
-                {
-                    for (int i = 0; i < 4; i++)
-                    {
-                        for (int j = 0; j < 4; j++)
-                        {
-                            if (i < 3 && game_board[i + 1, j].Text == "")
-                            {
-                                game_board[i + 1, j].Text = game_board[i, j].Text;
-                                game_board[i, j].Text = "";
-                            }
-                        }
-                    }
-                }
+                make_random();
             }
         }
+        private void make_random()
+            
+        {
+            Random r = new Random();
+            int[] init_numbers = { 2, 2, 2, 2, 4 };
+            int random_index = r.Next(0, init_numbers.Length);
+            int r1 , r1_x, r1_y;
+            r1 = init_numbers[random_index];
+
+            do
+            {
+                r1_x = r.Next(0, 3);
+                r1_y = r.Next(0, 3);
+            }
+            while (game_board[r1_x, r1_y].Text != "");
+            {
+                game_board[r1_x, r1_y].Text = Convert.ToString(r1);
+            }
+        }   
     }
 }
